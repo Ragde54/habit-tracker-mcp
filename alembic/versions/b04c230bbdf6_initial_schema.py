@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 835944c91780
+Revision ID: b04c230bbdf6
 Revises:
-Create Date: 2026-03-14 03:51:26.176500
+Create Date: 2026-03-14 04:49:15.810671
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from alembic import op  # type: ignore[attr-defined]
 
 # revision identifiers, used by Alembic.
-revision: str = "835944c91780"
+revision: str = "b04c230bbdf6"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,11 +38,13 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("category_id", sa.Integer(), nullable=False),
         sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("description", sa.Text(), nullable=False),
+        sa.Column("description", sa.Text(), nullable=True),
         sa.Column("frequency_type", sa.Text(), nullable=False),
         sa.Column("frequency_target", sa.Integer(), nullable=False),
-        sa.Column("created_at", sa.Text(), nullable=False),
-        sa.Column("archived_at", sa.Text(), nullable=False),
+        sa.Column(
+            "created_at", sa.Text(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False
+        ),
+        sa.Column("archived_at", sa.Text(), nullable=True),
         sa.CheckConstraint(
             "frequency_type IN ('daily', 'weekly', 'monthly')", name="ck_habits_frequency_type"
         ),
@@ -57,8 +59,10 @@ def upgrade() -> None:
         "habit_completions",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("habit_id", sa.Integer(), nullable=False),
-        sa.Column("completed_at", sa.Text(), nullable=False),
-        sa.Column("note", sa.Text(), nullable=False),
+        sa.Column(
+            "completed_at", sa.Text(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False
+        ),
+        sa.Column("note", sa.Text(), nullable=True),
         sa.Column("source", sa.Text(), nullable=False),
         sa.CheckConstraint("source IN ('manual', 'todo')", name="ck_habit_completions_source"),
         sa.ForeignKeyConstraint(
@@ -74,11 +78,13 @@ def upgrade() -> None:
         sa.Column("category_id", sa.Integer(), nullable=False),
         sa.Column("habit_id", sa.Integer(), nullable=True),
         sa.Column("title", sa.Text(), nullable=False),
-        sa.Column("notes", sa.Text(), nullable=False),
+        sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("priority", sa.Text(), nullable=False),
-        sa.Column("due_date", sa.Text(), nullable=False),
-        sa.Column("completed_at", sa.Text(), nullable=False),
-        sa.Column("created_at", sa.Text(), nullable=False),
+        sa.Column("due_date", sa.Text(), nullable=True),
+        sa.Column("completed_at", sa.Text(), nullable=True),
+        sa.Column(
+            "created_at", sa.Text(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False
+        ),
         sa.CheckConstraint("priority IN ('low', 'medium', 'high')", name="ck_todos_priority"),
         sa.ForeignKeyConstraint(
             ["category_id"],
@@ -91,16 +97,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_todos_id"), "todos", ["id"], unique=False)
-    op.create_index(
-        "ix_habit_completions_habit_id_completed_at",
-        "habit_completions",
-        ["habit_id", "completed_at"],
-    )
-    op.create_index("ix_todos_completed_at", "todos", ["completed_at"])
-    op.create_index("ix_todos_due_date", "todos", ["due_date"])
-    op.create_index("ix_habits_category_id", "habits", ["category_id"])
-    op.create_index("ix_todos_category_id", "todos", ["category_id"])
-    op.create_index("ix_todos_habit_id", "todos", ["habit_id"])
     # ### end Alembic commands ###
 
 
@@ -115,10 +111,4 @@ def downgrade() -> None:
     op.drop_table("habits")
     op.drop_index(op.f("ix_categories_id"), table_name="categories")
     op.drop_table("categories")
-    op.drop_index("ix_habit_completions_habit_id_completed_at", "habit_completions")
-    op.drop_index("ix_todos_completed_at", "todos")
-    op.drop_index("ix_todos_due_date", "todos")
-    op.drop_index("ix_habits_category_id", "habits")
-    op.drop_index("ix_todos_category_id", "todos")
-    op.drop_index("ix_todos_habit_id", "todos")
     # ### end Alembic commands ###
