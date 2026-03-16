@@ -2,7 +2,10 @@ install:
 	uv sync --group dev
 
 test:
-	uv run pytest tests/
+	uv run pytest tests/ --cov=src --cov-report=term-missing
+
+test-fast:
+	uv run pytest tests/ -x
 
 lint:
 	uv run ruff check src/ tests/

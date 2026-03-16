@@ -46,3 +46,16 @@ files = ["src/"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "scripts/*",
+    "*/orm.py",
+    "*/server.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true

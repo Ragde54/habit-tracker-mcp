@@ -32,6 +32,14 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
 
     try:
         with engine.begin() as conn:
+            habit_exists = conn.execute(
+                text("SELECT 1 FROM habits WHERE id = :habit_id"),
+                {"habit_id": params.habit_id},
+            ).scalar()
+
+            if not habit_exists:
+                raise ValueError(f"Habit '{params.habit_id}' not found")
+
             result = conn.execute(
                 text("""
                     INSERT INTO habit_completions (habit_id, completed_at, note, source)

@@ -34,15 +34,27 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
 
     try:
         with engine.begin() as conn:
+            if params.category_id is not None:
+                category_exists = conn.execute(
+                    text("SELECT 1 FROM categories WHERE id = :category_id"),
+                    {"category_id": params.category_id},
+                ).scalar()
+                if not category_exists:
+                    raise ValueError(f"Category '{params.category_id}' not found")
+
             result = conn.execute(
                 text("""
-                INSERT INTO habits (name,
-                                    description,
-                                    category_id,
-                                    frequency_type,
-                                    frequency_target)
-                VALUES (:name, :description, :category_id, :frequency_type, :frequency_target)
-            """),
+                    INSERT INTO habits (name,
+                                        description,
+                                        category_id,
+                                        frequency_type,
+                                        frequency_target)
+                    VALUES (:name,
+                            :description,
+                            :category_id,
+                            :frequency_type,
+                            :frequency_target)
+                """),
                 {
                     "name": params.name,
                     "description": params.description,

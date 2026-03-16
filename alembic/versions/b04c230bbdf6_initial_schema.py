@@ -10,7 +10,7 @@ from typing import Sequence, Union
 
 import sqlalchemy as sa
 
-from alembic import op  # type: ignore[attr-defined]
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b04c230bbdf6"
@@ -26,7 +26,7 @@ def upgrade() -> None:
         "categories",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("color", sa.Text(), nullable=False),
+        sa.Column("color", sa.Text(), nullable=True),
         sa.Column("sort_order", sa.Integer(), nullable=False),
         sa.CheckConstraint("color LIKE '#%'", name="ck_categories_color_hex"),
         sa.PrimaryKeyConstraint("id"),
@@ -36,7 +36,7 @@ def upgrade() -> None:
     op.create_table(
         "habits",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("category_id", sa.Integer(), nullable=False),
+        sa.Column("category_id", sa.Integer(), nullable=True),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("frequency_type", sa.Text(), nullable=False),
@@ -75,7 +75,7 @@ def upgrade() -> None:
     op.create_table(
         "todos",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("category_id", sa.Integer(), nullable=False),
+        sa.Column("category_id", sa.Integer(), nullable=True),
         sa.Column("habit_id", sa.Integer(), nullable=True),
         sa.Column("title", sa.Text(), nullable=False),
         sa.Column("notes", sa.Text(), nullable=True),

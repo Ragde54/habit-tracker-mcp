@@ -10,7 +10,7 @@ repos:
     rev: v1.19.1
     hooks:
       - id: mypy
-        additional_dependencies: ["pydantic", "pydantic-settings", "sqlalchemy", "mcp"]
+        additional_dependencies: ["pydantic", "pydantic-settings", "sqlalchemy", "mcp", "alembic", "pytest"]
 
         args: [--ignore-missing-imports]
 

@@ -18,11 +18,8 @@ tool_definition = Tool(
         "type": "object",
         "properties": {
             "category_id": {"type": "integer", "description": "Filter by category"},
-            "include_completed": {
-                "type": "boolean",
-                "description": "Include completed todos",
-                "default": False,
-            },  # noqa: E501
+            "habit_id": {"type": "integer", "description": "Filter by habit"},
+            "completed": {"type": "boolean", "description": "Filter by completion status"},
         },
     },
 )
@@ -35,22 +32,25 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
     conditions = []
     bind_params: dict[str, Any] = {}
 
-    if not params.include_completed:
+    if params.completed is True:
+        conditions.append("completed_at IS NOT NULL")
+    elif params.completed is False:
         conditions.append("completed_at IS NULL")
 
     if params.category_id is not None:
         conditions.append("category_id = :category_id")
         bind_params["category_id"] = params.category_id
 
+    if params.habit_id is not None:
+        conditions.append("habit_id = :habit_id")
+        bind_params["habit_id"] = params.habit_id
+
     where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
 
     try:
         with engine.connect() as conn:
             result = conn.execute(
-                text(
-                    f"SELECT id, title, notes, due_date, completed_at \
-                     FROM todos {where_clause}"
-                ),
+                text(f"SELECT id, title, notes, due_date, completed_at FROM todos {where_clause}"),
                 bind_params,
             )
             todos = result.fetchall()
@@ -61,7 +61,6 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
             lines = []
             for todo in todos:
                 status = " [completed]" if todo.completed_at else ""
-
                 due_date_str = f" | due={todo.due_date}" if todo.due_date else ""
                 lines.append(
                     f"- id={todo.id} | {todo.title}{status}{due_date_str} | "

@@ -44,7 +44,7 @@ class AddTodoInput(BaseModel):
 
 class AddCategoryInput(BaseModel):
     name: str = Field(..., description="Name of the category")
-    color: str | None = Field(None, description="Color of the category")
+    color: str = Field(default="#808080", description="Color of the category")
     sort_order: int = Field(default=0, description="Sort order of the category")
 
 
@@ -96,7 +96,10 @@ class ListHabitsInput(BaseModel):
 
 class ListTodosInput(BaseModel):
     category_id: int | None = Field(None, description="Category ID of the todo")
-    include_completed: bool = Field(default=False, description="Include completed todos")
+    habit_id: int | None = Field(None, description="Habit ID of the todo")
+    completed: bool | None = Field(
+        None, description="Filter by completion status. None returns all"
+    )
 
 
 class ListCategoriesInput(BaseModel):

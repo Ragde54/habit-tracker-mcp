@@ -11,6 +11,9 @@ def _strip_leading_comments(sql: str) -> str:
 
 def check_query_allowed(sql: str, read_only_mode: bool) -> None:
     """Raise ValueError if the query is not allowed in the current mode."""
+    if not sql.strip():
+        raise ValueError("SQL query is empty")
+
     cleaned = _strip_leading_comments(sql)
 
     if not cleaned:

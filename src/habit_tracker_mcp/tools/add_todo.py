@@ -37,6 +37,22 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
 
     try:
         with engine.begin() as conn:
+            if params.category_id is not None:
+                category_exists = conn.execute(
+                    text("SELECT 1 FROM categories WHERE id = :category_id"),
+                    {"category_id": params.category_id},
+                ).scalar()
+                if not category_exists:
+                    raise ValueError(f"Category '{params.category_id}' not found")
+
+            if params.habit_id is not None:
+                habit_exists = conn.execute(
+                    text("SELECT 1 FROM habits WHERE id = :habit_id AND archived_at IS NULL"),
+                    {"habit_id": params.habit_id},
+                ).scalar()
+                if not habit_exists:
+                    raise ValueError(f"Habit '{params.habit_id}' not found")
+
             result = conn.execute(
                 text("""
                     INSERT INTO todos (title, notes, priority, due_date, category_id, habit_id)

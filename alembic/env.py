@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context  # type: ignore[attr-defined]
+from alembic import context
 from habit_tracker_mcp import models  # noqa: F401 — must import so models register
 from habit_tracker_mcp.database import Base
 
@@ -58,15 +58,20 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    connectable = config.attributes.get("connection", None)
 
-    with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
-
+    if connectable is None:
+        connectable = engine_from_config(
+            config.get_section(config.config_ini_section, {}),
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+        )
+        with connectable.connect() as connection:
+            context.configure(connection=connection, target_metadata=target_metadata)
+            with context.begin_transaction():
+                context.run_migrations()
+    else:
+        context.configure(connection=connectable, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
 
