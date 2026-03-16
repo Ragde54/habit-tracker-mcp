@@ -1,0 +1,18 @@
+services:
+  habit-tracker-mcp:
+    image: habit-tracker-mcp
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - habit_tracker_data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:////app/data/habit_tracker.db
+      - READ_ONLY_MODE=false
+      - LOG_LEVEL=INFO
+    stdin_open: true
+    tty: false
+
+volumes:
+  habit_tracker_data:
+    driver: local

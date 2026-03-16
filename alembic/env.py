@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
@@ -10,8 +11,17 @@ from habit_tracker_mcp.database import Base
 # access to the values within the .ini file in use.
 config = context.config
 
+# Priority 1: Environment variable DATABASE_URL
+# Priority 2: Alembic config file sqlalchemy.url
+db_url = os.environ.get("DATABASE_URL")
+if db_url:
+    # If using sqlite and relative path, ensure it works
+    if db_url.startswith("sqlite:///./"):
+        # Keep relative
+        pass
+    config.set_main_option("sqlalchemy.url", db_url)
+
 # Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 

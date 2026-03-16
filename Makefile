@@ -21,3 +21,24 @@ seed:
 
 run:
 	uv run python -m habit_tracker_mcp.server
+
+inspect:
+	npx @modelcontextprotocol/inspector uv run python -m habit_tracker_mcp.server
+
+docker-build:
+	docker build -f docker/Dockerfile -t habit-tracker-mcp .
+
+docker-run:
+	docker-compose -f docker/docker-compose.yml up
+
+docker-down:
+	docker-compose -f docker/docker-compose.yml down
+
+docker-shell:
+	docker-compose -f docker/docker-compose.yml run --rm habit-tracker-mcp /bin/bash
+
+docker-logs:
+	docker-compose -f docker/docker-compose.yml logs -f
+
+inspect-docker:
+	npx @modelcontextprotocol/inspector docker-compose run --rm -T habit-tracker-mcp
