@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./habit_tracker.db"
     read_only_mode: bool = False
     log_level: str = "INFO"
+    compose_file: str = "docker/docker-compose.yml"
 
 
 settings = Settings()

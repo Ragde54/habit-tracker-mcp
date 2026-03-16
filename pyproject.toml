@@ -2,7 +2,7 @@
 name = "habit-tracker-mcp"
 version = "0.1.0"
 description = "An MCP server for tracking habits and todos."
-# readme = "README.md"
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.18.4",
