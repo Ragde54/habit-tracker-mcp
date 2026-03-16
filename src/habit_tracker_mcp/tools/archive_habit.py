@@ -9,7 +9,10 @@ from habit_tracker_mcp.models.inputs import ArchiveHabitInput
 
 tool_definition = Tool(
     name="archive_habit",
-    description="Soft-delete a habit by archiving it. Preserves all completion history.",
+    description=(
+        "Use this tool when the user wants to stop tracking a habit but keep its history. "
+        "The tool will soft-delete the habit by setting its archived_at timestamp."
+    ),
     inputSchema={
         "type": "object",
         "properties": {

@@ -42,6 +42,12 @@ class AddTodoInput(BaseModel):
         return _validate_iso_datetime("due_date", v)
 
 
+class AddCategoryInput(BaseModel):
+    name: str = Field(..., description="Name of the category")
+    color: str | None = Field(None, description="Color of the category")
+    sort_order: int = Field(default=0, description="Sort order of the category")
+
+
 class CompleteHabitInput(BaseModel):
     habit_id: int = Field(..., description="ID of the habit to complete")
     note: str | None = Field(None, description="Optional journal entry")
@@ -81,6 +87,20 @@ class ArchiveHabitInput(BaseModel):
     @classmethod
     def validate_archived_at(cls, v: str | None) -> str | None:
         return _validate_iso_datetime("archived_at", v)
+
+
+class ListHabitsInput(BaseModel):
+    category_id: int | None = Field(None, description="Category ID of the habit")
+    include_archived: bool = Field(default=False, description="Include archived habits")
+
+
+class ListTodosInput(BaseModel):
+    category_id: int | None = Field(None, description="Category ID of the todo")
+    include_completed: bool = Field(default=False, description="Include completed todos")
+
+
+class ListCategoriesInput(BaseModel):
+    pass
 
 
 class RunQueryInput(BaseModel):

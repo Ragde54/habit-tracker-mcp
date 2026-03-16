@@ -9,8 +9,11 @@ from habit_tracker_mcp.models.inputs import CompleteTodoInput
 
 tool_definition = Tool(
     name="complete_todo",
-    description="Mark a todo as complete. Auto-logs a habit completion \
-        if the todo is linked to a habit.",
+    description=(
+        "Use this tool when the user wants to mark a todo as complete. "
+        "The tool will create a completion record and return its ID. "
+        "If the todo is linked to a habit, the tool will also log a habit completion."
+    ),
     inputSchema={
         "type": "object",
         "properties": {

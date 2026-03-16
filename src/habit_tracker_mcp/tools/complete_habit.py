@@ -9,7 +9,11 @@ from habit_tracker_mcp.models.inputs import CompleteHabitInput
 
 tool_definition = Tool(
     name="complete_habit",
-    description="Log a completion for a habit.",
+    description=(
+        "Log a completion for a habit. Habits can be completed multiple times — "
+        "once per period based on their frequency_type. Check existing completions "
+        "with run_query before logging to avoid duplicates."
+    ),
     inputSchema={
         "type": "object",
         "properties": {

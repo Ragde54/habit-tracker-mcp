@@ -9,7 +9,13 @@ from habit_tracker_mcp.models.inputs import AddTodoInput
 
 tool_definition = Tool(
     name="add_todo",
-    description="Add a new todo item.",
+    description=(
+        "Use this tool when the user wants to add a new todo item. "
+        "The tool will create the todo and return its ID, which can be used "
+        "with other tools like 'link_todo_to_category'."
+        "Call list_categories first if you want to assign a category to the todo."
+        "Call list_habits first if you want to assign a habit to the todo."
+    ),
     inputSchema={
         "type": "object",
         "properties": {

@@ -11,7 +11,14 @@ from habit_tracker_mcp.security import check_query_allowed
 
 tool_definition = Tool(
     name="run_query",
-    description="Execute a read-only SQL SELECT query against the habit tracker database.",
+    description=(
+        "Execute a read-only SQL SELECT query against the habit tracker SQLite database. "
+        "Use this for complex queries, aggregations, streak calculations, and anything "
+        "not covered by the dedicated tools. "
+        "Do NOT use this for writes — use add_habit, add_todo, complete_habit, "
+        "complete_todo, and archive_habit instead. "
+        "The db://schema resource contains the full table structure."
+    ),
     inputSchema={
         "type": "object",
         "properties": {

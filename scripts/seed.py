@@ -1,28 +1,41 @@
 # scripts/seed.py
 from habit_tracker_mcp.database import SessionLocal
-from habit_tracker_mcp.models import Category, Habit, Todo
+from habit_tracker_mcp.orm import Category, Habit, Todo
 
 
 def seed() -> None:
     db = SessionLocal()
     try:
-        health = Category(name="health", color="#FF5733", sort_order=0)
-        learning = Category(name="learning", color="#33C1FF", sort_order=1)
-        db.add_all([health, learning])
+        health = Category(name="Health", color="#FF5733", sort_order=0)
+        learning = Category(name="Learning", color="#33C1FF", sort_order=1)
+        work = Category(name="Work", color="#FF33A8", sort_order=2)
+        db.add_all([health, learning, work])
         db.flush()
 
-        habit = Habit(
+        habit1 = Habit(
             category_id=health.id,
             name="Morning run",
+            frequency_type="weekly",
+            frequency_target=3,
+        )
+        habit2 = Habit(
+            category_id=learning.id,
+            name="Read 30 mins",
             frequency_type="daily",
             frequency_target=1,
         )
-        db.add(habit)
+        habit3 = Habit(
+            category_id=health.id,
+            name="Drink water",
+            frequency_type="daily",
+            frequency_target=3,
+        )
+        db.add_all([habit1, habit2, habit3])
         db.flush()
 
         todo = Todo(
             category_id=learning.id,
-            title="Read SQLAlchemy docs",
+            title="Read MCP docs",
             priority="high",
         )
         db.add(todo)

@@ -9,7 +9,11 @@ from habit_tracker_mcp.models.inputs import AddHabitInput
 
 tool_definition = Tool(
     name="add_habit",
-    description="Add a new habit to track.",
+    description=(
+        "Use this tool when the user wants to start tracking a new habit. "
+        "The tool will create the habit and return its ID, which can be used "
+        "with other tools like 'link_habit_to_category'."
+    ),
     inputSchema={
         "type": "object",
         "properties": {
@@ -32,12 +36,17 @@ def run(arguments: dict[str, Any]) -> list[TextContent]:
         with engine.begin() as conn:
             result = conn.execute(
                 text("""
-                INSERT INTO habits (name, description, frequency_type, frequency_target)
-                VALUES (:name, :description, :frequency_type, :frequency_target)
+                INSERT INTO habits (name,
+                                    description,
+                                    category_id,
+                                    frequency_type,
+                                    frequency_target)
+                VALUES (:name, :description, :category_id, :frequency_type, :frequency_target)
             """),
                 {
                     "name": params.name,
                     "description": params.description,
+                    "category_id": params.category_id,
                     "frequency_type": params.frequency_type,
                     "frequency_target": params.frequency_target,
                 },

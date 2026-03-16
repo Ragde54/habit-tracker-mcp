@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text, func
+from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from habit_tracker_mcp.database import Base
@@ -26,7 +26,9 @@ class Habit(Base):
     description: Mapped[str | None] = mapped_column(Text)
     frequency_type: Mapped[str] = mapped_column(Text, nullable=False)
     frequency_target: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[str] = mapped_column(Text, server_default=func.now(), nullable=False)
+    created_at: Mapped[str] = mapped_column(
+        Text, server_default="(datetime('now'))", nullable=False
+    )  # noqa: E501
     archived_at: Mapped[str | None] = mapped_column(Text)
     __table_args__ = (
         CheckConstraint(
@@ -45,7 +47,9 @@ class HabitCompletion(Base):
     __tablename__ = "habit_completions"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     habit_id: Mapped[int] = mapped_column(ForeignKey("habits.id"), nullable=False)
-    completed_at: Mapped[str] = mapped_column(Text, server_default=func.now(), nullable=False)
+    completed_at: Mapped[str] = mapped_column(
+        Text, server_default="(datetime('now'))", nullable=False
+    )  # noqa: E501
     note: Mapped[str | None] = mapped_column(Text)
     source: Mapped[str] = mapped_column(Text, nullable=False)
     __table_args__ = (
@@ -64,7 +68,9 @@ class Todo(Base):
     priority: Mapped[str] = mapped_column(Text, nullable=False)
     due_date: Mapped[str | None] = mapped_column(Text)
     completed_at: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[str] = mapped_column(Text, server_default=func.now(), nullable=False)
+    created_at: Mapped[str] = mapped_column(
+        Text, server_default="(datetime('now'))", nullable=False
+    )  # noqa: E501
     __table_args__ = (
         CheckConstraint("priority IN ('low', 'medium', 'high')", name="ck_todos_priority"),
     )
