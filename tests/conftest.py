@@ -39,6 +39,7 @@ def db_session(db_engine: Engine) -> Generator[Session, None, None]:
 @pytest.fixture(scope="function")
 def override_engine(db_engine: Engine, monkeypatch: MonkeyPatch) -> Engine:
     import habit_tracker_mcp.database as db_module
+    import habit_tracker_mcp.resources as resources_module
     import habit_tracker_mcp.tools.add_category as add_category_module
     import habit_tracker_mcp.tools.add_habit as add_habit_module
     import habit_tracker_mcp.tools.add_todo as add_todo_module
@@ -52,6 +53,7 @@ def override_engine(db_engine: Engine, monkeypatch: MonkeyPatch) -> Engine:
 
     for mod in [
         db_module,
+        resources_module,
         add_category_module,
         add_habit_module,
         add_todo_module,
