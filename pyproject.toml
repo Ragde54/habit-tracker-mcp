@@ -54,6 +54,7 @@ omit = [
     "scripts/*",
     "*/orm.py",
     "*/server.py",
+    "*/logging_config.py",
 ]
 
 [tool.coverage.report]

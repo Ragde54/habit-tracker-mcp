@@ -1,4 +1,7 @@
+import logging
 import re
+
+logger = logging.getLogger(__name__)
 
 MUTATION_KEYWORDS = {"insert", "update", "delete", "drop", "alter", "truncate", "replace"}
 
@@ -22,6 +25,7 @@ def check_query_allowed(sql: str, read_only_mode: bool) -> None:
     first_keyword = cleaned.split()[0].lower()
 
     if read_only_mode and first_keyword in MUTATION_KEYWORDS:
+        logger.warning("Blocked mutation in read-only mode: %s", first_keyword.upper())
         raise ValueError(
             f"Server is in read-only mode. '{first_keyword.upper()}' statements are not permitted."
         )

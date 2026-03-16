@@ -1,5 +1,6 @@
 import asyncio
 from importlib.metadata import version
+from logging import getLogger
 from typing import Any, cast
 
 from mcp.server import Server
@@ -19,6 +20,7 @@ from mcp.types import (
 )
 from pydantic import AnyUrl
 
+from habit_tracker_mcp.logging_config import setup_logging
 from habit_tracker_mcp.prompts import SQL_ASSISTANT_PROMPT, get_sql_assistant
 from habit_tracker_mcp.resources import SCHEMA_RESOURCE, get_schema_contents
 from habit_tracker_mcp.tools import (
@@ -35,6 +37,7 @@ from habit_tracker_mcp.tools import (
 )
 
 app = Server("habit-tracker")
+logger = getLogger(__name__)
 
 _TOOL_MODULES = [
     add_category,
@@ -58,7 +61,9 @@ async def list_tools() -> list[Tool]:
 
 @app.call_tool()  # type: ignore[untyped-decorator]
 async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
+    logger.info("Calling tool: %s", name)
     if name not in _TOOL_MAP:
+        logger.warning("Unknown tool requested: %s", name)
         raise ValueError(f"Tool not found: {name}")
     return cast(list[TextContent], _TOOL_MAP[name].run(arguments))
 
@@ -90,6 +95,7 @@ async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> GetP
 
 
 async def main() -> None:
+    setup_logging()
     async with stdio_server() as (read_stream, write_stream):
         await app.run(
             read_stream,
