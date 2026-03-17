@@ -1,4 +1,4 @@
-# habit-tracker-mcp
+# habit_tracker_mcp
 
 A production-grade Model Context Protocol (MCP) server for tracking personal habits and todos. It provides a robust bridge between Large Language Models (LLMs) and a persistent SQLite backend, enabling AI assistants to help you maintain consistency and analyze your productivity patterns.
 
